@@ -1,0 +1,119 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.google.protobuf:protobuf-gradle-plugin:0.8.3'
+    }
+}
+
+plugins {
+  id "com.google.protobuf" version "0.8.3"
+  id "java"
+  id "application"
+  id "idea"
+  id 'com.github.ben-manes.versions' version '0.17.0'
+}
+
+group 'io.clertonraf.grpc'
+version '1.0-SNAPSHOT'
+
+protobuf {
+    protoc {
+        // The version of protoc must match protobuf-java. If you don't depend on
+        // protobuf-java directly, you will be transitively depending on the
+        // protobuf-java version that grpc depends on.
+        artifact = "com.google.protobuf:protoc:3.5.1-1"
+    }
+    plugins {
+        grpc {
+            artifact = 'io.grpc:protoc-gen-grpc-java:1.9.0'
+        }
+    }
+    generateProtoTasks {
+        all()*.plugins {
+            grpc {}
+        }
+    }
+    generatedFilesBaseDir = "$projectDir/src/generated"
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile 'junit:junit:4.12'
+    compile 'io.grpc:grpc-all:1.9.0'
+    compile 'org.hibernate:hibernate-core:4.3.6.Final'
+    compile 'javax.servlet:javax.servlet-api:3.1.0'
+    compile 'org.slf4j:slf4j-simple:1.7.7'
+    compile 'org.slf4j:slf4j-api:1.7.7'
+    compile 'org.javassist:javassist:3.15.0-GA'
+    compile 'mysql:mysql-connector-java:5.1.46'
+    compile 'org.hibernate:hibernate-c3p0:4.2.3.Final'
+}
+
+idea {
+    module {
+        sourceDirs += file("${projectDir}/src/generated/main/java");
+        sourceDirs += file("${projectDir}/src/generated/main/grpc");
+    }
+}
+
+task runServer(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'io.clertonraf.grpc.WalletServer'
+}
+
+task runClient(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'io.clertonraf.grpc.WalletClient'
+}
+
+startScripts.enabled = false
+
+task walletServer(type: CreateStartScripts) {
+    mainClassName = "io.clertonraf.grpc.WalletServer"
+    applicationName = "wallet-server"
+    outputDir = new File(project.buildDir, 'tmp')
+    classpath = jar.outputs.files + project.configurations.runtime
+}
+
+task walletClient(type: CreateStartScripts) {
+    mainClassName = "io.clertonraf.grpc.WalletClient"
+    applicationName = "wallet-client"
+    outputDir = new File(project.buildDir, 'tmp')
+    classpath = jar.outputs.files + project.configurations.runtime
+}
+
+task fatJarClient(type: Jar) {
+    manifest {
+        attributes 'Implementation-Title': 'Client',
+                'Implementation-Version': version,
+                'Main-Class': 'io.clertonraf.grpc.WalletClient'
+    }
+    baseName = project.name + '-client'
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}
+
+task fatJarServer(type: Jar) {
+    manifest {
+        attributes 'Implementation-Title': 'Server',
+                'Implementation-Version': version,
+                'Main-Class': 'io.clertonraf.grpc.WalletServer'
+    }
+    baseName = project.name + '-server'
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}
+
+applicationDistribution.into("bin") {
+    from(walletServer)
+    from(walletClient)
+    fileMode = 0755
+}
