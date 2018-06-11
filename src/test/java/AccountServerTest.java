@@ -26,28 +26,33 @@ public class AccountServerTest {
     @Test
     public void testWallet() {
 
+        Assert.assertEquals("Unknown currency",client.withdraw("1",200.0,"BRL"));
+
+        Assert.assertEquals("Unknown currency",client.deposit("1",200.0,"BRL"));
+
         Assert.assertEquals("insufficient_funds",client.withdraw("1",200.0,"USD"));
 
-        client.deposit("1",100.0,"USD");
+        Assert.assertEquals("ok",client.deposit("1",100.0,"USD"));
 
-        Map<String, Double> balances =  client.getBalance("1");
+        Map<String, Double> balances = client.getBalance("1");
         Assert.assertEquals(100.0, balances.get("USD"), 0.00001);
         Assert.assertEquals(0.0, balances.get("EUR"), 0.00001);
         Assert.assertEquals(0.0, balances.get("GBP"), 0.00001);
 
         Assert.assertEquals("insufficient_funds",client.withdraw("1",200.0,"USD"));
 
-        client.deposit("1",100.0,"EUR");
+        Assert.assertEquals("ok",client.deposit("1",100.0,"EUR"));
 
-        balances =  client.getBalance("1");
+        balances = client.getBalance("1");
         Assert.assertEquals(100.0, balances.get("USD"), 0.00001);
         Assert.assertEquals(100.0, balances.get("EUR"), 0.00001);
         Assert.assertEquals(0.0, balances.get("GBP"), 0.00001);
 
         Assert.assertEquals("insufficient_funds",client.withdraw("1",200.0,"USD"));
-        client.deposit("1",100.0,"USD");
 
-        balances =  client.getBalance("1");
+        Assert.assertEquals("ok",client.deposit("1",100.0,"USD"));
+
+        balances = client.getBalance("1");
         Assert.assertEquals(200.0, balances.get("USD"), 0.00001);
         Assert.assertEquals(100.0, balances.get("EUR"), 0.00001);
         Assert.assertEquals(0.0, balances.get("GBP"), 0.00001);

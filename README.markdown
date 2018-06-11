@@ -54,7 +54,7 @@ Output
 The balance of the users account for each currency
 ```
 
-####Database
+#### Database
 Latest version of MySQL server available on dockerhub
 
 #### Integration Test

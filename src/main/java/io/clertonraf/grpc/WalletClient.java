@@ -57,18 +57,18 @@ public class WalletClient {
   }
 
   /** Deposit */
-  public void deposit(String user, double amount, String currency) {
+  public String deposit(String user, double amount, String currency) {
       logger.info("user "+ user + " will try to deposit " + amount+currency);
     WalletRequest request = WalletRequest.newBuilder().setUser(user).setAmount(amount).setCurrency(currency).build();
-    WalletResponse response;
+    WalletResponse response = null;
     try {
       response = blockingStub.deposit(request);
     } catch (StatusRuntimeException e) {
       logger.log(Level.WARNING, "RPC failed: {0}", e.getStatus());
-      return;
     }
 
     logger.info("Deposit status: " + response.getMessage());
+    return response.getMessage();
   }
 
   /** Withdraw */

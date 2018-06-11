@@ -29,6 +29,21 @@ public class WalletServiceImpl implements WalletService {
         return WalletServiceImplHelper.INSTANCE;
     }
 
+    private boolean isInvalidCurrency(String currency) {
+        if(currency == null) {
+            return true;
+        }
+        try {
+            Currency.valueOf(currency);
+        } catch (IllegalArgumentException iae) {
+            return true;
+        }
+
+        return false;
+
+    }
+
+
     private void createAccount(int user, BigDecimal amount, String currency) {
         Account account = new Account();
         account.setUser(user);
@@ -58,6 +73,15 @@ public class WalletServiceImpl implements WalletService {
 
     @Override
     public synchronized String deposit(int user, BigDecimal amount, String currency) {
+
+        if(amount.doubleValue() < 0) {
+            return "negative_amount";
+        }
+
+        if(isInvalidCurrency(currency)) {
+            return "Unknown currency";
+        }
+
         WalletDAO dao = WalletDAOImpl.getInstance();
         Wallet wallet = dao.getWalletByIdAndCurrency(user, Currency.valueOf(currency));
 
@@ -75,6 +99,14 @@ public class WalletServiceImpl implements WalletService {
 
     @Override
     public synchronized String withdraw(int user, BigDecimal amount, String currency) {
+        if(amount.doubleValue() < 0) {
+            return "negative_amount";
+        }
+
+        if(isInvalidCurrency(currency)) {
+            return "Unknown currency";
+        }
+
         WalletDAO dao = WalletDAOImpl.getInstance();
         Wallet wallet = dao.getWalletByIdAndCurrency(user,Currency.valueOf(currency));
 
@@ -92,6 +124,7 @@ public class WalletServiceImpl implements WalletService {
 
     @Override
     public synchronized Map<String, BigDecimal> getBalance(int user) {
+
         WalletDAO dao = WalletDAOImpl.getInstance();
         List<Wallet> wallets = dao.getWalletsById(user);
 
