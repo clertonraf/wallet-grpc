@@ -20,6 +20,6 @@ services:
     depends_on:
       - mysql_server
     volumes:
-      - ./build/libs/grpc-java-hibernate-gradle-starter-server-1.0-SNAPSHOT.jar:/usr/local/grpc-java-hibernate-gradle-starter-server-1.0-SNAPSHOT.jar
+      - ./build/libs/wallet-grpc-server-1.0-SNAPSHOT.jar:/usr/local/wallet-grpc-server-1.0-SNAPSHOT.jar
     working_dir: /usr/local
-    command: bash -c "java -jar grpc-java-hibernate-gradle-starter-server-1.0-SNAPSHOT.jar"
+    command: bash -c "java -jar wallet-grpc-server-1.0-SNAPSHOT.jar"
