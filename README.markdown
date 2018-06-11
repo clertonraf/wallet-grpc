@@ -7,13 +7,13 @@ The wallet server will keep track of a users monetary balance in the system.
 
 The client will emulate users depositing and withdrawing funds.
 
-#### Wallet Server
+### Wallet Server
 The wallet server expose the interface described below via gRPC, using `port 50051`.
 
 #### Interfaces
 
-##### Deposit
-Deposit funds to the users wallet.
+#### Deposit
+> Deposit funds to the users wallet.
 
 ###### Input
 ```sh
@@ -29,7 +29,7 @@ Currency (allowed values are EUR, USD, GBP)
 Unknown currency
 ```
 ##### Withdraw
-Withdraw funds from the users wallet.
+> Withdraw funds from the users wallet.
 
 ###### Input
 ```sh
@@ -45,7 +45,7 @@ Currency (allowed values are EUR, USD, GBP)
 Unknown currency, insufficient funds
 ```
 ##### Balance
-Get the users current balance.
+> Get the users current balance.
 
 ###### Input
 ```sh
@@ -56,6 +56,24 @@ The balance of the users account for each currency
 
 #### Database
 Latest version of MySQL server available on dockerhub
+
+The is no need to run any scripts on database. 
+
+If the client makes a new deposit with a new user id, a new account is automatically created with the 3 wallets (USD, GBP, EUR).
+
+The are only two tables into the `walletSist` schema for this example:
+
+````
+account                   wallet
+___________________     _______________________________________
+| user | version |      | user | currency | balance | version |
+-------------------     ---------------------------------------
+````
+
+* `user` is the primary key for `account`.
+* `wallet` has a composite key `user` and `currency`. `user` references `account`.
+* An `account` has many `wallet`. A `wallet` references to a single `account`.
+
 
 #### Integration Test
 ```sh
