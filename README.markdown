@@ -1,4 +1,4 @@
-# The Java challenge using Gradle
+# Wallet with gRPC
 
 ### Requirements
 A wallet server and a wallet client. 
@@ -190,7 +190,7 @@ docker run -p 3306:3306 --name mysql -e MYSQL_ROOT_PASSWORD=12345 -d mysql --def
 
 ```
 
-A `test/resources/hibernate.cfg.xml` file is provided just for test scenarios. The differences relies on the host connection. This time, will try to connect to `localhost` instead of the docker  containet name. 
+A `test/resources/hibernate.cfg.xml` file is provided just for test scenarios. The differences relies on the host connection. This time, will try to connect to `localhost` instead of the docker container name. 
 
 * Run `gradle test` with log level `INFO`
 ````
