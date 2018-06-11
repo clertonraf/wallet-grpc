@@ -162,7 +162,7 @@ The following plugins are already setup (in `build.gradle`):
 * Generate code and the jars:
 
 ```sh
-./gradlew buildDist
+./gradlew installDist
 ./gradlew fatJarClient
 ./gradlew fatJarClient
 ```
